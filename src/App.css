@@ -1,0 +1,32 @@
+.input-group {
+  display: inline;
+  align-items: center;
+}
+
+.symbol {
+  font-family: monospace;
+  font-size: 18px;
+  color: green;
+  padding-right: 5px;
+}
+
+.input {
+  background-color: #000;
+  border: none;
+  color: white;
+  outline: none;
+  padding-left: 5px;
+  font-family: monospace;
+  width: 15px;
+  --animation: terminal-blink;
+}
+
+.command {
+  background-color: #000;
+  border: none;
+  color: white;
+  outline: none;
+  font-family: monospace;
+  width: 100%; /* Defina o tamanho do input se necessário */
+}
+

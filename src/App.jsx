@@ -15,16 +15,50 @@ function App() {
   const [count, setcount] = useState(0)
   const [currentTime, setcurrentTime] = useState('')
   const [currentDate, setCurrentDate] = useState('');
+  const [messages, setMessages] = useState([]);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
   };
 
-  const handleCommandInputKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      setCommandValue(event.target.value);
-      setInputValue('>'); // Restaura o caractere '>' no input após pressionar Enter
-      event.target.value = ''; // Limpa o input após pressionar Enter
+  const handleCommandInputKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (!inputValue.includes('>')) {
+        setInputValue('>')
+        setMessages([...messages, 'ERROR: > NEEDED TO USE TERMINAL'])
+      } else {
+        console.log(inputValue)
+
+        switch (inputValue) {
+          case '> /log':
+            setInputValue('>')
+            setMessages([...messages, 'LOG: ' + messages])
+            break;
+          case '> /help':
+            setInputValue('>')
+            setMessages([...messages, '/log - Para ver o log de comandos. \n /help - Para ver todos os comandos. \n /login - Para realizar login. \n /signin - Para realizar cadastro. \n /logout - Para fazer logout. \n /home - Para navegar para a home. \n /clear - Limpa toda a tela.'])
+            break;
+
+          case '> /clear':
+            setInputValue('>')
+            setMessages([])
+            break;
+
+          case '> /signin':
+            setInputValue('>')
+            setMessages([])
+            break;
+
+          default:
+            if (inputValue.trim() !== '') {
+              setMessages([...messages, `command: ${inputValue} not found.`]);
+              setInputValue('>');
+            }
+        }
+
+
+      }
     }
   };
 
@@ -130,20 +164,32 @@ function App() {
           <p>Location: {location}</p>
           <p>User: Guest</p>
           <p>==============================</p>
-
         </header>
+        <div className='message-container' style={{ marginTop: '60px' }}>
+          {messages.map((message, index) => (
+            <div key={index} className='message'>
+              {message}
+            </div>
+          ))}
+        </div>
         <div className='input-group'>
-          <input type='text' value={inputValue} readOnly className='input' />
+          <input
+            type='text'
+            className='input'
+          />
         </div>
         <input
           type='text'
           className='command'
           onKeyDown={handleCommandInputKeyDown}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
           placeholder='Digite um comando e pressione Enter'
         />
       </div>
     </>
-  )
+  );
+
 }
 
-export default App
+export default App;

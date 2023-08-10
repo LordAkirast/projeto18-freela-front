@@ -59,7 +59,7 @@ function App() {
         setlastCommand('confirmPass')
       } else if (lastCommand.includes('confirmPass') && name && email && password) {
         setInputValue('')
-        setMessages(['Name: ', name, 'Email: ', email, 'Password: ', password, 'ConfirmPassword: ', confirmPassword, 'Y TO CONFIRM N TO DECLINE'])
+        setMessages(['Name: ', name, 'Email: ', email, 'Password: ', password, 'ConfirmPassword: ', confirmPassword, 'y TO CONFIRM n TO DECLINE'])
         setlastCommand('signComplete')
       } else if (inputValue.includes('y') && lastCommand.includes('signComplete')) {
         setMessages(['SENDING DATA... PRESS ENTER TO CONTINUE'])
@@ -158,8 +158,13 @@ function App() {
         setlastCommand('')
 
       } else if (inputValue.includes('n') && lastCommand.includes('signComplete')) {
-        alert('cancelar!')
+        setMessages(['OPERATION CANCELED!'])
+        setname("")
+        setemail("")
+        setpassword("")
+        setconfirmPassword("")
         setlastCommand('')
+        setInputValue('> ')
       } else {
 
 

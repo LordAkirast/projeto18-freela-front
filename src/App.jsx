@@ -26,6 +26,19 @@ function App() {
 
 
 
+  ///services
+  const [creator, setcreator] = useState('')
+  const [creatorEmail, setcreatorEmail] = useState('')
+  const [serviceName, setserviceName] = useState('')
+  const [serviceDescription, setserviceDescription] = useState('')
+  const [serviceCategory, setserviceCategory] = useState('')
+  const [servicePrice, setservicePrice] = useState(0)
+  const [serviceDeadline, setserviceDeadline] = useState('')
+
+
+
+
+
   ///signup
   const [name, setname] = useState('')
   const [email, setemail] = useState('')
@@ -44,6 +57,9 @@ function App() {
 
       setCommandHistory([...commandHistory, inputValue])
 
+
+
+     
 
 
 
@@ -253,7 +269,81 @@ function App() {
         }
 
 
+      }  else if (lastCommand.includes('sertitle')) {
+        setserviceName(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['SERVICE DESCRIPTION: '])
+        setlastCommand('sercription')
+
+      } else if (lastCommand.includes('sercription') && token) {
+        setserviceDescription(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['SERVICE CATEGORY: '])
+        setlastCommand('sercat')
+
+      } else if (lastCommand.includes('sercat') && token) {
+        setserviceCategory(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['SERVICE PRICE: EX: 45.00 - number only'])
+        setlastCommand('serprice')
+
+      } else if (lastCommand.includes('serprice') && token) {
+        setservicePrice(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['SERVICE DEADLINE: Maximum days needed to finish the job.'])
+        setlastCommand('serline')
       }
+      else if (lastCommand.includes('serline') && token) {
+        setserviceDeadline(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['CREATING SERVICE... PRESS ENTER TO CONTINUE '])
+        setlastCommand('creserv')
+
+      } else if (lastCommand.includes('creserv')) {
+        setcreator(name)
+        setcreatorEmail(email)
+
+
+        const data = {
+          creator,
+          creatorEmail,
+          serviceName,
+          serviceCategory,
+          serviceDeadline,
+          serviceDescription,
+          servicePrice,
+          token
+        };
+
+
+        try {
+          const response = await axios.post(`${import.meta.env.VITE_API_URL}/services`, data);
+          console.log(response.data); // Trate a resposta da API conforme necessário
+          setlastCommand('')
+          setcreator('');
+          setcreatorEmail('');
+          setserviceName('');
+          setserviceDescription('');
+          setserviceCategory('');
+          setservicePrice(0);
+          setserviceDeadline('');
+          setMessages(['SUCCESS: SERVICE CREATED! You can check the service in the homepage using the command "home" or in your services using the command for that.'])
+          setInputValue('> ')
+
+
+
+        } catch (error) {
+
+
+          console.error(error);
+          setMessages(['ERROR: ', error.response.data])
+
+          setlastCommand('error')
+          setInputValue('> ')
+        }
+
+
+      } 
 
 
 
@@ -363,6 +453,12 @@ function App() {
                 setInputValue('')
                 break;
 
+              case '> \services':
+                setMessages(['SERVICE TITLE: '])
+                setlastCommand('sertitle')
+                setInputValue('')
+                break;
+
 
               case '> \last':
                 setInputValue('> ')
@@ -423,7 +519,7 @@ function App() {
         console.log("ArrowUp - currentCommandIndex:", currentCommandIndex)
         setInputValue(previousCommand);
       }
-    
+
     } else if (e.key === "ArrowDown") {
 
       // Tecla de seta para baixo
@@ -440,7 +536,7 @@ function App() {
         setCurrentCommandIndex(-1);
       }
     }
-    
+
   };
 
 

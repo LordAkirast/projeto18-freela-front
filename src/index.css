@@ -12,6 +12,18 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  overflow-y: scroll;
+  /* Adicione rolagem vertical mesmo que o conteúdo caiba */
+  overflow-x: hidden;
+  scrollbar-width: none;
+  /* Remova a largura da barra de rolagem (aplica-se ao Firefox) */
+  -ms-overflow-style: none;
+  /* Remova o estilo da barra de rolagem (aplica-se ao Microsoft Edge) */
+
+}
+
+:root::-webkit-scrollbar {
+  width: 0; /* Esconda a largura da barra de rolagem (aplica-se ao Chrome, Safari, Opera) */
 }
 
 input {
@@ -48,12 +60,15 @@ header p {
 
 .conditional-div {
   background-color: black;
-  width: max-content;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-
+  flex-direction: column;
+  flex-wrap: nowrap; /* Evite que os itens quebrem para a próxima linha */
+  overflow-x: auto; /* Ativar rolagem horizontal quando o conteúdo exceder a largura */
+  overflow-y: hidden; /* Esconder a rolagem vertical */
+  margin-top: 60px;
 }
+
+
 
 .conditional-div p {
   display: flex;

@@ -35,6 +35,7 @@ function App() {
   const [servicePrice, setservicePrice] = useState(0)
   const [serviceDeadline, setserviceDeadline] = useState('')
   const [services, setservices] = useState([])
+  const [username, setusername] = useState('')
 
 
 
@@ -45,6 +46,10 @@ function App() {
   const [email, setemail] = useState('')
   const [password, setpassword] = useState('')
   const [confirmPassword, setconfirmPassword] = useState('')
+
+
+  ///
+ 
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -72,6 +77,53 @@ function App() {
     }
 
   }
+
+  //função para obter os meus serviços
+  const getServicesMe = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/services/${email}`);
+      console.log(response.data); // Trate a resposta da API conforme necessário
+      setservices(response.data)
+      setMessages(['SUCCESS: GET OWN SERVICES!'])
+      setInputValue('> ')
+
+
+
+    } catch (error) {
+
+
+      console.error(error);
+      setMessages(['ERROR: ', error.response.data])
+
+      setlastCommand('error')
+      setInputValue('> ')
+    }
+
+  }
+
+    //função para obter serviços por usuário
+    const getServicesbyCreator = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/services/${email}`);
+        console.log(response.data); // Trate a resposta da API conforme necessário
+        setservices(response.data)
+        setMessages(['SUCCESS: GET OWN SERVICES!'])
+        setInputValue('> ')
+  
+  
+  
+      } catch (error) {
+  
+  
+        console.error(error);
+        setMessages(['ERROR: ', error.response.data])
+  
+        setlastCommand('error')
+        setInputValue('> ')
+      }
+  
+    }
+  
 
   const handleCommandInputKeyDown = async (e) => {
 
@@ -400,7 +452,6 @@ function App() {
             last - See last command used. |
            `])
                 setlastCommand(inputValue)
-                // setCommandHistory([...commandHistory, lastCommand])
                 break;
 
               case '> \clear':
@@ -479,6 +530,10 @@ function App() {
                 setlastCommand(inputValue)
                 break;
 
+                case '> \home':
+                  getServices();
+                  break;
+
               case '> \signup':
                 setMessages(['NAME: '])
                 setlastCommand('n4m3')
@@ -492,6 +547,11 @@ function App() {
                 setInputValue('')
                 setservices([])
                 break;
+              
+                case '> \showvices':
+                  setlastCommand(inputValue)
+                  getServicesMe();
+                  break;
 
 
               case '> \last':
@@ -686,13 +746,7 @@ function App() {
           <p>==============================</p>
         </header>
 
-        <div className='message-container' style={{ marginTop: '60px' }}>
-          {messages.map((message, index) => (
-            <div key={index} className='message'>
-              {message}
-            </div>
-          ))}
-        </div>
+        
         <div className={`conditional-div ${services ? 'visible' : 'hidden'}`} >
           {services.map((service, index) => (
             <div key={index} className='service'>
@@ -703,6 +757,13 @@ function App() {
               <p>DESCRIPTION: {service.servicedescription}</p>
               <p>DEADLINE: {service.deadline} | PRICE: {service.price}</p>
               {/* Renderize outras propriedades conforme necessário */}
+            </div>
+          ))}
+        </div>
+        <div className='message-container' style={{ marginTop: '60px' }}>
+          {messages.map((message, index) => (
+            <div key={index} className='message'>
+              {message}
             </div>
           ))}
         </div>

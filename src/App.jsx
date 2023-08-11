@@ -320,8 +320,8 @@ function App() {
           const response = await axios.post(`${import.meta.env.VITE_API_URL}/services`, data);
           console.log(response.data); // Trate a resposta da API conforme necessário
           setlastCommand('')
-          setcreator('');
-          setcreatorEmail('');
+          //setcreator('');
+          //setcreatorEmail('');
           setserviceName('');
           setserviceDescription('');
           setserviceCategory('');

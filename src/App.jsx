@@ -49,7 +49,7 @@ function App() {
 
 
   ///
- 
+
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -101,29 +101,33 @@ function App() {
 
   }
 
-    //função para obter serviços por usuário
-    const getServicesbyCreator = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/services/${email}`);
-        console.log(response.data); // Trate a resposta da API conforme necessário
-        setservices(response.data)
-        setMessages(['SUCCESS: GET OWN SERVICES!'])
-        setInputValue('> ')
-  
-  
-  
-      } catch (error) {
-  
-  
-        console.error(error);
-        setMessages(['ERROR: ', error.response.data])
-  
-        setlastCommand('error')
-        setInputValue('> ')
-      }
-  
+  //função para obter serviços por usuário
+  const getServicesbyCreator = async () => {
+    setlastCommand('searched')
+
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/services/user/${username}`);
+      console.log(response.data.rows);
+      console.log(response.data[0]); // Trate a resposta da API conforme necessário
+      setservices(response.data)
+      response.data[0].includes('USER DOES NOT HAVE ANY SERVICES') ? setMessages(['USER ' + username + ' DOES NOT HAVE ANY SERVICE!']) : setMessages(['SUCCESS: GET SERVICES BY USERNAME!'])
+
+      setInputValue('> ')
+
+
+
+    } catch (error) {
+
+
+      console.error(error);
+      setMessages(['ERROR: ', error.response.data])
+
+      setlastCommand('error')
+      setInputValue('> ')
     }
-  
+
+  }
+
 
   const handleCommandInputKeyDown = async (e) => {
 
@@ -419,6 +423,13 @@ function App() {
         }
 
 
+      } else if (lastCommand.includes('s3archu53r')) {
+        setusername(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['PRESS ENTER TO CONTINUE... '])
+        setlastCommand('searching')
+      } else if (lastCommand.includes('searching')) {
+        getServicesbyCreator();
       }
 
 
@@ -530,9 +541,9 @@ function App() {
                 setlastCommand(inputValue)
                 break;
 
-                case '> \home':
-                  getServices();
-                  break;
+              case '> \home':
+                getServices();
+                break;
 
               case '> \signup':
                 setMessages(['NAME: '])
@@ -547,11 +558,17 @@ function App() {
                 setInputValue('')
                 setservices([])
                 break;
-              
-                case '> \showvices':
-                  setlastCommand(inputValue)
-                  getServicesMe();
-                  break;
+
+              case '> \showvices':
+                setlastCommand(inputValue)
+                getServicesMe();
+                break;
+
+              case '> \searchuser':
+                setMessages(['CREATOR NAME: '])
+                setlastCommand('s3archu53r')
+                setInputValue('')
+                break;
 
 
               case '> \last':
@@ -746,7 +763,7 @@ function App() {
           <p>==============================</p>
         </header>
 
-        
+
         <div className={`conditional-div ${services ? 'visible' : 'hidden'}`} >
           {services.map((service, index) => (
             <div key={index} className='service'>

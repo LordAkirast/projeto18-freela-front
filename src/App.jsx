@@ -18,6 +18,8 @@ function App() {
   const [currentDate, setCurrentDate] = useState('');
   const [messages, setMessages] = useState([]);
   const [lastCommand, setlastCommand] = useState('')
+  const [dev, setdev] = useState(0)
+
 
   ///signup
   const [name, setname] = useState('')
@@ -32,6 +34,11 @@ function App() {
   const handleCommandInputKeyDown = async (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
+
+
+
+
+
 
 
       ///se o comando for de signup entra aqui
@@ -146,7 +153,7 @@ function App() {
 
 
           console.error(error);
-          setMessages(['ERROR: ',error.response.data])
+          setMessages(['ERROR: ', error.response.data])
           setname("")
           setemail("")
           setpassword("")
@@ -165,7 +172,84 @@ function App() {
         setconfirmPassword("")
         setlastCommand('')
         setInputValue('> ')
-      } else {
+      }   ///login
+
+      else if (lastCommand.includes('log1n')) {
+        setemail(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['Password: '])
+        setlastCommand('logword')
+      }
+      else if (lastCommand.includes('logword') && email) {
+      
+        setpassword(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['Logging... PRESS ENTER TO CONTINUE '])
+        setlastCommand('logw0rding')
+      } else if (lastCommand.includes('logw0rding')) {
+
+        const data = {
+          email,
+          password,
+        };
+
+
+        try {
+          const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, data);
+          console.log(response.data); // Trate a resposta da API conforme necessário
+          setname(response.data.name)
+          setemail(response.data.email)
+          setMessages(['SUCCESS: LOGIN!'])
+          setInputValue('> ')
+
+
+
+        } catch (error) {
+          
+
+          if (!email) {
+            setMessages(["ERROR: Email cannot be empty"])
+            setemail("")
+            setpassword("")
+            setlastCommand('error')
+            setInputValue('')
+          }
+
+          else if (!password) {
+            setMessages(["ERROR: Password cannot be empty"])
+            setemail("")
+            setpassword("")
+            setlastCommand('error')
+            setInputValue('')
+          }
+
+          else if (password.length < 3) {
+            setMessages(["ERROR: Password must be larger than 3 characters."])
+            setname("")
+            setemail("")
+            setpassword("")
+            setconfirmPassword("")
+            setlastCommand('error')
+            setInputValue('')
+          }
+
+
+          console.error(error);
+          setMessages(['ERROR: ', error.response.data])
+          setname("")
+          setemail("")
+          setpassword("")
+          setconfirmPassword("")
+          setlastCommand('error')
+          setInputValue('> ')
+        }
+
+
+      }
+
+
+
+      else {
 
 
         if (!inputValue.includes('>')) {
@@ -209,6 +293,19 @@ function App() {
             case '> \last':
               setInputValue('> ')
               setMessages([...messages, lastCommand])
+              break;
+
+            case '> \login':
+              setMessages(['EMAIL: '])
+              setlastCommand('log1n')
+              setInputValue('')
+              break;
+
+            case '> \dev':
+              setMessages(['DEVMODE ACTIVATED'])
+              setlastCommand('dev')
+              setdev(1)
+              setInputValue('> ')
               break;
 
             default:
@@ -325,6 +422,7 @@ function App() {
           <p>Date: {currentDate}</p>
           <p>Time: {currentTime}</p>
           <p>Location: {location}</p>
+          {dev === 1 ? <p>LastCommand: {lastCommand} </p> : ''}
           <p>User: {name}</p>
           <p>==============================</p>
         </header>
@@ -342,7 +440,7 @@ function App() {
           />
         </div>
         <input
-          type='text'
+          type={email ? 'password' : 'text'}
           className='command'
           onKeyDown={handleCommandInputKeyDown}
           value={inputValue}

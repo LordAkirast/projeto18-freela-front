@@ -34,6 +34,7 @@ function App() {
   const [serviceCategory, setserviceCategory] = useState('')
   const [servicePrice, setservicePrice] = useState(0)
   const [serviceDeadline, setserviceDeadline] = useState('')
+  const [services, setservices] = useState([])
 
 
 
@@ -49,6 +50,29 @@ function App() {
     setInputValue(event.target.value);
   };
 
+  //função para obter os servicos
+  const getServices = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/services`);
+      console.log(response.data); // Trate a resposta da API conforme necessário
+      setservices(response.data)
+      setMessages(['SUCCESS: GET SERVICES!'])
+      setInputValue('> ')
+
+
+
+    } catch (error) {
+
+
+      console.error(error);
+      setMessages(['ERROR: ', error.response.data])
+
+      setlastCommand('error')
+      setInputValue('> ')
+    }
+
+  }
+
   const handleCommandInputKeyDown = async (e) => {
 
     if (e.key === 'Enter') {
@@ -59,7 +83,7 @@ function App() {
 
 
 
-     
+
 
 
 
@@ -269,7 +293,7 @@ function App() {
         }
 
 
-      }  else if (lastCommand.includes('sertitle')) {
+      } else if (lastCommand.includes('sertitle')) {
         setserviceName(inputValue.replace(/[\s>]+/g, ''))
         setInputValue('')
         setMessages(['SERVICE DESCRIPTION: '])
@@ -343,7 +367,7 @@ function App() {
         }
 
 
-      } 
+      }
 
 
 
@@ -382,6 +406,7 @@ function App() {
               case '> \clear':
                 setInputValue('> ')
                 setMessages([])
+                setservices([])
                 setlastCommand(inputValue)
                 break;
 
@@ -389,6 +414,7 @@ function App() {
                 setMessages(['NAME: '])
                 setlastCommand('n4m3')
                 setInputValue('')
+                setservices([])
                 break;
 
 
@@ -401,6 +427,11 @@ function App() {
                 setMessages(['EMAIL: '])
                 setlastCommand('log1n')
                 setInputValue('')
+                setservices([])
+                break;
+
+              case '> \home':
+                getServices();
                 break;
 
               case '> \dev':
@@ -444,6 +475,7 @@ function App() {
               case '> \clear':
                 setInputValue('> ')
                 setMessages([])
+                setservices([])
                 setlastCommand(inputValue)
                 break;
 
@@ -451,12 +483,14 @@ function App() {
                 setMessages(['NAME: '])
                 setlastCommand('n4m3')
                 setInputValue('')
+                setservices([])
                 break;
 
               case '> \services':
                 setMessages(['SERVICE TITLE: '])
                 setlastCommand('sertitle')
                 setInputValue('')
+                setservices([])
                 break;
 
 
@@ -469,6 +503,7 @@ function App() {
                 setMessages(['EMAIL: '])
                 setlastCommand('log1n')
                 setInputValue('')
+                setservices([])
                 break;
 
               case '> \logout':
@@ -619,8 +654,14 @@ function App() {
       setcurrentTime(getCurrentTime());
     }, 60000); // 60000 milissegundos = 1 minuto
 
+
+
+
     // Limpa o intervalo quando o componente é desmontado
     return () => clearInterval(interval);
+
+
+
   }, []); // Array de dependências vazio para executar apenas uma vez
 
 
@@ -644,10 +685,24 @@ function App() {
           <p>User: {name}</p>
           <p>==============================</p>
         </header>
+
         <div className='message-container' style={{ marginTop: '60px' }}>
           {messages.map((message, index) => (
             <div key={index} className='message'>
               {message}
+            </div>
+          ))}
+        </div>
+        <div className={`conditional-div ${services ? 'visible' : 'hidden'}`} >
+          {services.map((service, index) => (
+            <div key={index} className='service'>
+              <p style={{ display: 'flex', flexDirection: 'row-reverse' }}>{service.id}</p>
+              <p>{service.creator}</p>
+              <p>TITLE: {service.servicename}</p>
+              <p>CATEGORY: {service.category}</p>
+              <p>DESCRIPTION: {service.servicedescription}</p>
+              <p>DEADLINE: {service.deadline} | PRICE: {service.price}</p>
+              {/* Renderize outras propriedades conforme necessário */}
             </div>
           ))}
         </div>

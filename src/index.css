@@ -16,9 +16,11 @@
 
 input {
   background-color: #000;
-  border: none; /* Remover a borda */
+  border: none;
+  /* Remover a borda */
   color: white;
-  outline: none; /* Remover a borda quando o input está em foco */
+  outline: none;
+  /* Remover a borda quando o input está em foco */
   font-size: x-large;
 }
 
@@ -44,7 +46,22 @@ header p {
   margin: 5px;
 }
 
+.conditional-div {
+  background-color: black;
+  width: max-content;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 
+}
 
+.conditional-div p {
+  display: flex;
+  flex-direction: row;
+  margin: 5px;
+}
 
-
+.service {
+  border: solid;
+  border-color: white;
+}

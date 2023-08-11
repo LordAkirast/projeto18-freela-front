@@ -19,6 +19,11 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [lastCommand, setlastCommand] = useState('')
   const [dev, setdev] = useState(0)
+  const [token, settoken] = useState('')
+  const [commandHistory, setCommandHistory] = useState([]);
+  const [currentCommandIndex, setCurrentCommandIndex] = useState(1);
+
+
 
 
   ///signup
@@ -32,11 +37,12 @@ function App() {
   };
 
   const handleCommandInputKeyDown = async (e) => {
+
     if (e.key === 'Enter') {
       e.preventDefault();
 
 
-
+      setCommandHistory([...commandHistory, inputValue])
 
 
 
@@ -181,7 +187,7 @@ function App() {
         setlastCommand('logword')
       }
       else if (lastCommand.includes('logword') && email) {
-      
+
         setpassword(inputValue.replace(/[\s>]+/g, ''))
         setInputValue('')
         setMessages(['Logging... PRESS ENTER TO CONTINUE '])
@@ -199,13 +205,15 @@ function App() {
           console.log(response.data); // Trate a resposta da API conforme necessário
           setname(response.data.name)
           setemail(response.data.email)
-          setMessages(['SUCCESS: LOGIN!'])
+          settoken(response.data.token)
+          setlastCommand('')
+          setMessages(['SUCCESS: LOGGED IN! New commands have been unlocked. Use the "help" command to explore the new functions.'])
           setInputValue('> ')
 
 
 
         } catch (error) {
-          
+
 
           if (!email) {
             setMessages(["ERROR: Email cannot be empty"])
@@ -258,68 +266,181 @@ function App() {
         } else {
           console.log(inputValue)
 
-          switch (inputValue) {
-            case '> \log':
-              setInputValue('> ')
-              setMessages([...messages, 'LOG: ' + messages])
-              setlastCommand(inputValue)
-              break;
-            case '> \help':
-              setInputValue('> ')
-              setMessages([...messages, `log - See all history logs. |
+
+          if (!token) {
+            switch (inputValue) {
+              case '> \log':
+                setInputValue('> ')
+                setMessages([...messages, 'LOG: ' + messages])
+                setlastCommand(inputValue)
+                // setCommandHistory([...commandHistory, lastCommand])
+                break;
+              case '> \help':
+                setInputValue('> ')
+                setMessages([...messages, `log - See all history logs. |
+            help - See all commands. |
+            login - To login. |
+            signup - To register. |
+            home - To go to main page. |
+            clear - Clear screen. |
+            last - See last command used. |
+           `])
+                setlastCommand(inputValue)
+                // setCommandHistory([...commandHistory, lastCommand])
+                break;
+
+              case '> \clear':
+                setInputValue('> ')
+                setMessages([])
+                setlastCommand(inputValue)
+                break;
+
+              case '> \signup':
+                setMessages(['NAME: '])
+                setlastCommand('n4m3')
+                setInputValue('')
+                break;
+
+
+              case '> \last':
+                setInputValue('> ')
+                setMessages([...messages, lastCommand])
+                break;
+
+              case '> \login':
+                setMessages(['EMAIL: '])
+                setlastCommand('log1n')
+                setInputValue('')
+                break;
+
+              case '> \dev':
+                setMessages(dev === 0 ? ['DEVMODE ACTIVATED'] : ['DEVMODE DEACTIVATED'])
+                setlastCommand('dev')
+                setdev(dev === 0 ? 1 : 0)
+                setInputValue('> ')
+                break;
+
+              default:
+
+                if (inputValue.trim() !== '') {
+                  setMessages([...messages, `command: ${inputValue} not found or you don't have permission to use it. Use 'help' to see commands.`]);
+                  setInputValue('> ');
+                }
+            }
+          } else {
+            ///logged user
+            switch (inputValue) {
+              case '> \log':
+                setInputValue('> ')
+                setMessages([...messages, 'LOG: ' + messages])
+                setlastCommand(inputValue)
+                break;
+              case '> \help':
+                setInputValue('> ')
+                setMessages([...messages, `log - See all history logs. |
             help - See all commands. |
             login - To login. |
             signup - To register. |
             logout - To logout. |
             home - To go to main page. |
             clear - Clear screen. |
+            services - To create a service. |
+            showvices - To display all your services |
+            searchuser - To search for an user. |
            `])
-              setlastCommand(inputValue)
-              break;
+                setlastCommand(inputValue)
+                break;
 
-            case '> \clear':
-              setInputValue('> ')
-              setMessages([])
-              setlastCommand(inputValue)
-              break;
+              case '> \clear':
+                setInputValue('> ')
+                setMessages([])
+                setlastCommand(inputValue)
+                break;
 
-            case '> \signup':
-              setMessages(['NAME: '])
-              setlastCommand('n4m3')
-              setInputValue('')
-              break;
+              case '> \signup':
+                setMessages(['NAME: '])
+                setlastCommand('n4m3')
+                setInputValue('')
+                break;
 
 
-            case '> \last':
-              setInputValue('> ')
-              setMessages([...messages, lastCommand])
-              break;
+              case '> \last':
+                setInputValue('> ')
+                setMessages([...messages, lastCommand])
+                break;
 
-            case '> \login':
-              setMessages(['EMAIL: '])
-              setlastCommand('log1n')
-              setInputValue('')
-              break;
+              case '> \login':
+                setMessages(['EMAIL: '])
+                setlastCommand('log1n')
+                setInputValue('')
+                break;
 
-            case '> \dev':
-              setMessages(['DEVMODE ACTIVATED'])
-              setlastCommand('dev')
-              setdev(1)
-              setInputValue('> ')
-              break;
+              case '> \logout':
+                setMessages(['LOGOUT SUCCESS! '])
+                setlastCommand('logout')
+                setcount(0)
+                settoken('')
+                setname('')
+                setemail('')
+                setpassword('')
+                setconfirmPassword('')
+                setInputValue('> ')
+                break;
 
-            default:
+              case '> \dev':
+                setMessages(['DEVMODE ACTIVATED'])
+                setlastCommand('dev')
+                setdev(1)
+                setInputValue('> ')
+                break;
 
-              if (inputValue.trim() !== '') {
-                setMessages([...messages, `command: ${inputValue} not found. Use 'help' to see commands.`]);
-                setInputValue('> ');
-              }
+              default:
+
+                if (inputValue.trim() !== '') {
+                  setMessages([...messages, `command: ${inputValue} not found. Use 'help' to see commands.`]);
+                  setInputValue('> ');
+                }
+            }
+
           }
 
 
         }
       }
+    } else if (e.key === "ArrowUp") {
+
+      // Tecla de seta para cima
+      e.preventDefault();
+      const previousCommand = commandHistory[commandHistory.length - currentCommandIndex];
+      if (currentCommandIndex > commandHistory.length) {
+        setInputValue(previousCommand)
+        setCurrentCommandIndex(currentCommandIndex - 1)
+      } else {
+        setCurrentCommandIndex(currentCommandIndex + 1);
+        console.log("ArrowUp - previouscommand:", previousCommand)
+        console.log("ArrowUp - commandhistory:", commandHistory)
+        console.log("ArrowUp - command.lenght:", commandHistory.length)
+        console.log("ArrowUp - currentCommandIndex:", currentCommandIndex)
+        setInputValue(previousCommand);
+      }
+    
+    } else if (e.key === "ArrowDown") {
+
+      // Tecla de seta para baixo
+      e.preventDefault();
+      if (currentCommandIndex > 0) {
+        const previousCommand = commandHistory[commandHistory.length - currentCommandIndex + 1];
+        setCurrentCommandIndex(currentCommandIndex - 1);
+        console.log("ArrowDown - previouscommand:", previousCommand)
+        console.log("ArrowDown - commandhistory:", commandHistory)
+        console.log("ArrowDown - currentCommandIndex:", currentCommandIndex)
+        setInputValue(previousCommand);
+      } else {
+        setInputValue("");
+        setCurrentCommandIndex(-1);
+      }
     }
+    
   };
 
 
@@ -423,6 +544,7 @@ function App() {
           <p>Time: {currentTime}</p>
           <p>Location: {location}</p>
           {dev === 1 ? <p>LastCommand: {lastCommand} </p> : ''}
+          {dev === 1 ? <p>CommandHistory: {commandHistory} </p> : ''}
           <p>User: {name}</p>
           <p>==============================</p>
         </header>
@@ -440,7 +562,7 @@ function App() {
           />
         </div>
         <input
-          type={email ? 'password' : 'text'}
+          type={email ? (password ? 'text' : 'password') : undefined}
           className='command'
           onKeyDown={handleCommandInputKeyDown}
           value={inputValue}

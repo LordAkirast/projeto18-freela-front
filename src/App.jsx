@@ -22,6 +22,7 @@ function App() {
   const [token, settoken] = useState('')
   const [commandHistory, setCommandHistory] = useState([]);
   const [currentCommandIndex, setCurrentCommandIndex] = useState(1);
+  const [earnings, setearnings] = useState(0)
 
 
 
@@ -165,6 +166,7 @@ function App() {
     }
 
   }
+
 
 
   const handleCommandInputKeyDown = async (e) => {
@@ -340,6 +342,7 @@ function App() {
           setname(response.data.name)
           setemail(response.data.email)
           settoken(response.data.token)
+          setearnings(response.data.earnings)
           setlastCommand('')
           setMessages(['SUCCESS: LOGGED IN! New commands have been unlocked. Use the "help" command to explore the new functions.'])
           setInputValue('> ')
@@ -822,7 +825,7 @@ function App() {
           {dev === 1 ? <p>LastCommand: {lastCommand} </p> : ''}
           {dev === 1 ? <p>CommandHistory: {commandHistory} </p> : ''}
           <p>{token ? 'User:' : 'Not Logged'} {name}</p>
-          <p>Earnings: {earnings}</p>
+          {token ? <p>Earnings: {earnings}</p> : ''}
           <p>==============================</p>
         </header>
 

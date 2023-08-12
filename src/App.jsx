@@ -39,6 +39,10 @@ function App() {
 
 
 
+  ///buyService
+  const [serviceId, setserviceId] = useState(0)
+  const [serviceQtd, setserviceQtd] = useState(0)
+
 
 
   ///signup
@@ -111,6 +115,40 @@ function App() {
       console.log(response.data[0]); // Trate a resposta da API conforme necessário
       setservices(response.data)
       response.data[0].includes('USER DOES NOT HAVE ANY SERVICES') ? setMessages(['USER ' + username + ' DOES NOT HAVE ANY SERVICE!']) : setMessages(['SUCCESS: GET SERVICES BY USERNAME!'])
+
+      setInputValue('> ')
+
+
+
+    } catch (error) {
+
+
+      console.error(error);
+      setMessages(['ERROR: ', error.response.data])
+
+      setlastCommand('error')
+      setInputValue('> ')
+    }
+
+  }
+
+
+  //função para comprar serviço
+  const buyService = async () => {
+    setlastCommand('bought')
+
+    const data = {
+      buyer: name,
+      serviceQtd: serviceQtd,
+      token: token,
+    }
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/buy/${serviceId}`, data);
+      console.log(response.data);
+      setserviceId(0)
+      setserviceQtd(0)
+      setMessages(['SUCCESS! SERVICE BOUGHT!'])
 
       setInputValue('> ')
 
@@ -430,6 +468,18 @@ function App() {
         setlastCommand('searching')
       } else if (lastCommand.includes('searching')) {
         getServicesbyCreator();
+      } else if (lastCommand.includes('bser1d')) {
+        setserviceId(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['SERVICE QUANTITY: Integer only - ex: 1,2,3...'])
+        setlastCommand('bserqtd')
+      } else if (lastCommand.includes('bserqtd')) {
+        setserviceQtd(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['PRESS ENTER TO CONTINUE...'])
+        setlastCommand('buying')
+      } else if (lastCommand.includes('buying')) {
+        buyService();
       }
 
 
@@ -528,8 +578,13 @@ function App() {
             home - To go to main page. |
             clear - Clear screen. |
             services - To create a service. |
-            showvices - To display all your services |
-            searchuser - To search for an user. |
+            showvices - To display all your created services |
+            searchuser - To search for an user's services.. |
+            sbuy - To buy a service. |
+            deacvices - To deactivate a service that belongs to you. |
+            scancel - To cancel a service that is in progress. |
+            showorders - To show all your services orders. |
+
            `])
                 setlastCommand(inputValue)
                 break;
@@ -553,10 +608,17 @@ function App() {
                 break;
 
               case '> \services':
-                setMessages(['SERVICE TITLE: '])
+                setMessages(['CREATE SERVICE - SERVICE TITLE: '])
                 setlastCommand('sertitle')
                 setInputValue('')
                 setservices([])
+                break;
+
+
+              case '> \sbuy':
+                setMessages(['BUY SERVICE - SERVICE ID: '])
+                setlastCommand('bser1d')
+                setInputValue('')
                 break;
 
               case '> \showvices':
@@ -759,7 +821,8 @@ function App() {
           <p>Location: {location}</p>
           {dev === 1 ? <p>LastCommand: {lastCommand} </p> : ''}
           {dev === 1 ? <p>CommandHistory: {commandHistory} </p> : ''}
-          <p>User: {name}</p>
+          <p>{token ? 'User:' : 'Not Logged'} {name}</p>
+          <p>Earnings: {earnings}</p>
           <p>==============================</p>
         </header>
 

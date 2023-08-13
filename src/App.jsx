@@ -145,7 +145,7 @@ function App() {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/buy/${serviceId}`, data);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/services/buy/${serviceId}`, data);
       console.log(response.data);
       setserviceId(0)
       setserviceQtd(0)
@@ -587,6 +587,7 @@ function App() {
             deacvices - To deactivate a service that belongs to you. |
             scancel - To cancel a service that is in progress. |
             showorders - To show all your services orders. |
+            sdeliver - To deliver a service. |
 
            `])
                 setlastCommand(inputValue)

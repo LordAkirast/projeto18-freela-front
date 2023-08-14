@@ -53,7 +53,8 @@ function App() {
   const [confirmPassword, setconfirmPassword] = useState('')
 
 
-  ///
+  ///transactions
+  const [transactions, settransactions] = useState(0)
 
 
   const handleInputChange = (event) => {
@@ -166,6 +167,162 @@ function App() {
     }
 
   }
+
+  ///função para desativar serviço
+  const deactivateService = async () => {
+    setlastCommand('deactiv4ted')
+
+    const data = {
+      creatorEmail: email,
+    }
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/services/deactivate/${serviceId}`, data);
+      console.log(response.data);
+      setserviceId(0)
+      setMessages(['SUCCESS! SERVICE DEACTIVATED!'])
+
+      setInputValue('> ')
+
+
+
+    } catch (error) {
+
+
+      console.error(error);
+      setMessages(['ERROR: ', error.response.data])
+
+      setlastCommand('error')
+      setInputValue('> ')
+    }
+
+  }
+
+  ///função para sativar serviço
+  const activateService = async () => {
+    setlastCommand('activ4ted')
+
+    const data = {
+      creatorEmail: email,
+    }
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/services/activate/${serviceId}`, data);
+      console.log(response.data);
+      setserviceId(0)
+      setMessages(['SUCCESS! SERVICE ACTIVATED!'])
+
+      setInputValue('> ')
+
+
+
+    } catch (error) {
+
+
+      console.error(error);
+      setMessages(['ERROR: ', error.response.data])
+
+      setlastCommand('error')
+      setInputValue('> ')
+    }
+
+  }
+
+  ///função para cancelar serviço
+  const cancelService = async () => {
+    setlastCommand('c4nc3l3d')
+
+    const data = {
+      buyer: name,
+    }
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/services/cancel/${serviceId}`, data);
+      console.log(response.data);
+      setserviceId(0)
+      setMessages(['SUCCESS! SERVICE CANCELED!'])
+
+      setInputValue('> ')
+
+
+
+    } catch (error) {
+
+
+      console.error(error);
+      setMessages(['ERROR: ', error.response.data])
+
+      setlastCommand('error')
+      setInputValue('> ')
+    }
+
+  }
+
+
+  ///função para entregar serviço
+  const deliverService = async () => {
+    setlastCommand('d#liver33dd')
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/services/deliver/${serviceId}`);
+      console.log(response.data);
+      setserviceId(0)
+      setMessages(['SUCCESS! SERVICE DELIVERED!'])
+
+      setInputValue('> ')
+
+
+
+    } catch (error) {
+
+
+      console.error(error);
+      setMessages(['ERROR: ', error.response.data])
+
+      setlastCommand('error')
+      setInputValue('> ')
+    }
+
+  }
+
+
+  //função para obter as minhas transações
+  const getTransactions = async () => {
+
+
+
+    setlastCommand('sh0w0rd3rs')
+    settransactions(1)
+
+    const data = {
+      buyer: name,
+    }
+
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/services/transactions/${name}`);
+      console.log(response);
+      setservices(response.data)
+      setMessages(['SUCCESS: GET YOUR TRANSACTIONS!'])
+      setInputValue('> ')
+
+
+
+    } catch (error) {
+
+
+      console.error(error);
+      setMessages(['ERROR: ', error.response.data])
+
+      setlastCommand('error')
+      setInputValue('> ')
+    }
+
+  }
+
+///chijo
+function redirectToYouTube() {
+  window.location.href = 'https://youtu.be/zS9wOoN0oI4';
+}
 
 
 
@@ -483,6 +640,34 @@ function App() {
         setlastCommand('buying')
       } else if (lastCommand.includes('buying')) {
         buyService();
+      } else if (lastCommand.includes('deacid')) {
+        setserviceId(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['PRESS ENTER TO CONTINUE...'])
+        setlastCommand('deactivating')
+      } else if (lastCommand.includes('deactivating')) {
+        deactivateService();
+      } else if (lastCommand.includes('activate')) {
+        setserviceId(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['PRESS ENTER TO CONTINUE...'])
+        setlastCommand('activatingo')
+      } else if (lastCommand.includes('activatingo')) {
+        activateService();
+      } else if (lastCommand.includes('cancel')) {
+        setserviceId(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['PRESS ENTER TO CONTINUE...'])
+        setlastCommand('canc3ling')
+      } else if (lastCommand.includes('canc3ling')) {
+        cancelService();
+      } else if (lastCommand.includes('d3l1v3r')) {
+        setserviceId(inputValue.replace(/[\s>]+/g, ''))
+        setInputValue('')
+        setMessages(['PRESS ENTER TO CONTINUE...'])
+        setlastCommand('d3l1ver1ng')
+      } else if (lastCommand.includes('d3l1ver1ng')) {
+        deliverService();
       }
 
 
@@ -516,6 +701,7 @@ function App() {
             last - See last command used. |
            `])
                 setlastCommand(inputValue)
+                settransactions(0)
                 break;
 
               case '> \clear':
@@ -523,6 +709,7 @@ function App() {
                 setMessages([])
                 setservices([])
                 setlastCommand(inputValue)
+                settransactions(0)
                 break;
 
               case '> \signup':
@@ -530,12 +717,14 @@ function App() {
                 setlastCommand('n4m3')
                 setInputValue('')
                 setservices([])
+                settransactions(0)
                 break;
 
 
               case '> \last':
                 setInputValue('> ')
                 setMessages([...messages, lastCommand])
+
                 break;
 
               case '> \login':
@@ -543,10 +732,12 @@ function App() {
                 setlastCommand('log1n')
                 setInputValue('')
                 setservices([])
+                settransactions(0)
                 break;
 
               case '> \home':
                 getServices();
+                settransactions(0)
                 break;
 
               case '> \dev':
@@ -585,10 +776,11 @@ function App() {
             searchuser - To search for an user's services.. |
             sbuy - To buy a service. |
             deacvices - To deactivate a service that belongs to you. |
+            activate - To activate a service that belongs to you. |
             scancel - To cancel a service that is in progress. |
             showorders - To show all your services orders. |
             sdeliver - To deliver a service. |
-
+            mrschijo - If you are in good humor. |
            `])
                 setlastCommand(inputValue)
                 break;
@@ -598,10 +790,12 @@ function App() {
                 setMessages([])
                 setservices([])
                 setlastCommand(inputValue)
+                settransactions(0)
                 break;
 
               case '> \home':
                 getServices();
+                settransactions(0)
                 break;
 
               case '> \signup':
@@ -609,6 +803,7 @@ function App() {
                 setlastCommand('n4m3')
                 setInputValue('')
                 setservices([])
+                settransactions(0)
                 break;
 
               case '> \services':
@@ -616,6 +811,7 @@ function App() {
                 setlastCommand('sertitle')
                 setInputValue('')
                 setservices([])
+                settransactions(0)
                 break;
 
 
@@ -623,17 +819,58 @@ function App() {
                 setMessages(['BUY SERVICE - SERVICE ID: '])
                 setlastCommand('bser1d')
                 setInputValue('')
+                settransactions(0)
                 break;
 
               case '> \showvices':
                 setlastCommand(inputValue)
                 getServicesMe();
+                settransactions(0)
+                break;
+
+              case '> \deacvices':
+                setMessages(['DEACTIVATE SERVICE - SERVICE ID: '])
+                setlastCommand('deacid')
+                setInputValue('')
+                settransactions(0)
+                break;
+
+              case '> \activate':
+                setMessages(['ACTIVATE SERVICE - SERVICE ID: '])
+                setlastCommand('activate')
+                setInputValue('')
+                settransactions(0)
+                break;
+
+              case '> \scancel':
+                setMessages(['CANCEL SERVICE - SERVICE ID: '])
+                setlastCommand('cancel')
+                setInputValue('')
+                settransactions(0)
+                break;
+
+              case '> \showorders':
+                setlastCommand(inputValue)
+                getTransactions()
+                break;
+
+              case '> \sdeliver':
+                setMessages(['DELIVER SERVICE - SERVICE ID: '])
+                setlastCommand('d3l1v3r')
+                setInputValue('')
+                settransactions(0)
+                break;
+
+              case '> \mrschijo':
+                setMessages(['DO YOU KNOW WHAT YOU DID?'])
+                redirectToYouTube();
                 break;
 
               case '> \searchuser':
                 setMessages(['CREATOR NAME: '])
                 setlastCommand('s3archu53r')
                 setInputValue('')
+                settransactions(0)
                 break;
 
 
@@ -647,6 +884,7 @@ function App() {
                 setlastCommand('log1n')
                 setInputValue('')
                 setservices([])
+                settransactions(0)
                 break;
 
               case '> \logout':
@@ -659,6 +897,7 @@ function App() {
                 setpassword('')
                 setconfirmPassword('')
                 setInputValue('> ')
+                settransactions(0)
                 break;
 
               case '> \dev':
@@ -831,7 +1070,19 @@ function App() {
         </header>
 
 
-        <div className={`conditional-div ${services ? 'visible' : 'hidden'}`} >
+        {transactions === 1 ? <div className={`conditional-div ${services ? 'visible' : 'hidden'}`} >
+          {services.map((service, index) => (
+            <div key={index} className='service'>
+              <p style={{ display: 'flex', flexDirection: 'row-reverse' }}>{service.id}</p>
+              <p>{service.creator}</p>
+              <p>BUYER: {service.buyer}</p>
+              <p>SELLER: {service.seller}</p>
+              <p>QUANTITY: {service.serviceqtd}</p>
+              <p>PRICE: {service.transactionprice} | STATUS: {service.transactionstatus}</p>
+              {/* Renderize outras propriedades conforme necessário */}
+            </div>
+          ))}
+        </div> : <div className={`conditional-div ${services ? 'visible' : 'hidden'}`} >
           {services.map((service, index) => (
             <div key={index} className='service'>
               <p style={{ display: 'flex', flexDirection: 'row-reverse' }}>{service.id}</p>
@@ -844,6 +1095,9 @@ function App() {
             </div>
           ))}
         </div>
+        }
+
+
         <div className='message-container' style={{ marginTop: '60px' }}>
           {messages.map((message, index) => (
             <div key={index} className='message'>
